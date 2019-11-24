@@ -39,6 +39,8 @@ const (
 	LinuxBoot FirmwareType = "LinuxBoot"
 	// Bios is the legacy BIOS
 	Bios FirmwareType = "BIOS"
+	// TXT is Intel TXT launch
+	Txt FirmwareType = "TXT"
 )
 
 // BootloaderType can be any bootloader

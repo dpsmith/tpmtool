@@ -170,48 +170,59 @@ const (
 	Txt12EvtLog_Evt_Minor_Ver   = 0
 )
 
-type Txt12EvtType uint32
+type TxtLogID uint32
 
 const (
-	Txt12EvTypeBase = iota + 0x400
-	Txt12EvTypePcrMapping
-	Txt12EvTypeHashStart
-	_
-	Txt12EvTypeMleHash
-	Txt12EvTypeBiosAcRegDaTa = iota + 0x405
-	Txt12EvTypeCpuScrtmStat
-	Txt12EvTypeLcpControlHash
-	Txt12EvTypeElementsHash
-	Txt12EvTypeStmHash
-	Txt12EvTypeOsSinitDataCapHash
-	Txt12EvTypeSinitPubKeyHash
-	Txt12EvTypeLcpHash
+	TxtEvTypeBase TxtLogID = iota + 0x400
+	TxtEvTypePcrMapping
+	TxtEvTypeHashStart
+	TxtEvTypeCombinedHash
+	TxtEvTypeMleHash
+	TxtEvTypeBiosAcRegData TxtLogID = iota + 0x405
+	TxtEvTypeCpuScrtmStat
+	TxtEvTypeLcpControlHash
+	TxtEvTypeElementsHash
+	TxtEvTypeStmHash
+	TxtEvTypeOsSinitDataCapHash
+	TxtEvTypeSinitPubKeyHash
+	TxtEvTypeLcpHash
+	TxtEvTypeLcpDetailsHash
+	TxtEvTypeLcpAuthoritiesHash
+	TxtEvTypeNvInfoHash
+	TxtEvTypeColdBootBiosHash
+	TxtEvTypeKmHash
+	TxtEvTypeBpmHash
+	TxtEvTypeKmInfoHash
+	TxtEvTypeBpmInfoHash
+	TxtEvTypeBootPolHash
+	TxtEvTypeRandValue TxtLogID = iota + 0x4e8
+	TxtEvTypeCapValue
 )
 
-type Txt20EvtType uint32
-
-const (
-	Txt20EvTypeBase = iota + 0x400
-	Txt20EvTypePcrMapping
-	Txt20EvTypeHashStart
-	Txt20EvTypeCombinedHash
-	Txt20EvTypeMleHash
-	Txt20EvTypeBiosAcRegData = iota + 0x405
-	Txt20EvTypeCpuScrtmStat
-	Txt20EvTypeLcpControlHash
-	Txt20EvTypeElementsHash
-	Txt20EvTypeStmHash
-	Txt20EvTypeOsSinitDataCapHash
-	Txt20EvTypeSinitPubKeyHash
-	Txt20EvTypeLcpHash
-	Txt20EvTypeLcpDetailsHash
-	Txt20EvTypeLcpAuthoritiesHash
-	Txt20EvTypeNvInfoHash
-	Txt20EvTypeColdBootBiosHash
-	Txt20EvTypeKmHash
-	Txt20EvTypeBpmHash
-	Txt20EvTypeKmInfoHash
-	Txt20EvTypeBpmInfoHash
-	Txt20EvTypeBootPolHash
-	Txt20EvTypeCapValue = iota + 0x4fb
-)
+// Txt12LogTypes are the Intel TXT eventlog types
+var TxtLogTypes = map[TxtLogID]string{
+	TxtEvTypeBase: "EVTYPE_BASE",
+	TxtEvTypePcrMapping: "EVTYPE_PCR_MAPPING",
+	TxtEvTypeHashStart: "EVTYPE_HASH_START",
+	TxtEvTypeCombinedHash: "EVTYPE_COMBINED_HASH",
+	TxtEvTypeMleHash: "EVTYPE_MLE_HASH",
+	TxtEvTypeBiosAcRegData: "EVTYPE_BIOSAC_REG_DATA",
+	TxtEvTypeCpuScrtmStat: "EVTYPE_CPU_SCRTM_STAT",
+	TxtEvTypeLcpControlHash: "EVTYPE_LCP_CONTROL_HASH",
+	TxtEvTypeElementsHash: "EVTYPE_ELEMENTS_HASH",
+	TxtEvTypeStmHash: "EVTYPE_STM_HASH",
+	TxtEvTypeOsSinitDataCapHash: "EVTYPE_OSSINITDATA_CAP_HASH",
+	TxtEvTypeSinitPubKeyHash: "EVTYPE_SINIT_PUBKEY_ HASH",
+	TxtEvTypeLcpHash: "EVTYPE_LCP_HASH",
+	TxtEvTypeLcpDetailsHash: "EVTYPE_LCP_DETAILS_HASH",
+	TxtEvTypeLcpAuthoritiesHash: "EVTYPE_LCP_AUTHORITIES_HASH",
+	TxtEvTypeNvInfoHash: "EVTYPE_NV_INFO_HASH",
+	TxtEvTypeColdBootBiosHash: "EVTYPE_COLD_BOOT_BIOS_HASH",
+	TxtEvTypeKmHash: "EVTYPE_KM_HASH",
+	TxtEvTypeBpmHash: "EVTYPE_KM_HASH",
+	TxtEvTypeKmInfoHash: "EVTYPE_KM_INFO_HASH",
+	TxtEvTypeBpmInfoHash: "EVTYPE_BPM_INFO_HASH",
+	TxtEvTypeBootPolHash: "EVTYPE_BOOT_POL_HASH",
+	TxtEvTypeRandValue: "EVTYPE_RANDOM_VALUE",
+	TxtEvTypeCapValue: "EVTYPE_CAP_VALUE",
+}
