@@ -2,6 +2,7 @@ package tpm
 
 import (
 	"encoding/binary"
+	"io"
 	"os"
 )
 
@@ -57,36 +58,34 @@ func (e TxtLogID) String() string {
 	return ""
 }
 
-func readTxtEventLogContainer(file *os.File) (*TxtEventLogContainer, error) {
+func readTxtEventLogContainer(handle io.Reader) (*TxtEventLogContainer, error) {
 	var container TxtEventLogContainer
 
-	// TxtEventLogContainer
-	if err := binary.Read(file, binary.LittleEndian, &container.Signature); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.Signature); err != nil {
 		return nil, err
 	}
-
-	// skip reserve
-	file.Seek(12, 1)
-
-	if err := binary.Read(file, binary.LittleEndian, &container.ContainerVerMajor); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.Reserved); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.ContainerVerMinor); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.ContainerVerMajor); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.PcrEventVerMajor); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.ContainerVerMinor); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.PcrEventVerMinor); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.PcrEventVerMajor); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.Size); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.PcrEventVerMinor); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.PcrEventsOffset); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.Size); err != nil {
 		return nil, err
 	}
-	if err := binary.Read(file, binary.LittleEndian, &container.NextEventOffset); err != nil {
+	if err := binary.Read(handle, binary.LittleEndian, &container.PcrEventsOffset); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &container.NextEventOffset); err != nil {
 		return nil, err
 	}
 
@@ -94,17 +93,15 @@ func readTxtEventLogContainer(file *os.File) (*TxtEventLogContainer, error) {
 }
 
 func parseTxt12Log(file *os.File) (*PCRLog, error) {
-	var err error
-	var container *TxtEventLogContainer
 	var pcrLog PCRLog
 
-	container, err = readTxtEventLogContainer(file)
+	container, err := readTxtEventLogContainer(file)
 	if err != nil {
 		return nil, err
 	}
 
 	// seek to first PCR event
-	file.Seek(int64(container.PcrEventsOffset), 0)
+	file.Seek(int64(container.PcrEventsOffset), os.SEEK_SET)
 
 	for {
 		var offset int64
@@ -131,11 +128,27 @@ func parseTxt12Log(file *os.File) (*PCRLog, error) {
 	return &pcrLog, nil
 }
 
-func readTxt20Log(path string) (*PCRLog, error) {
-	file, err := os.Open(path)
-	if err != nil {
+func parseTxtHeapEventLogDescr(handle io.Reader) (*TxtHeapEventLogDescr, error) {
+	var descr TxtHeapEventLogDescr
+
+	if err := binary.Read(handle, binary.LittleEndian, &descr.Alg); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &descr.Reserved); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &descr.PhysAddr); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &descr.Size); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &descr.PcrEventsOffset); err != nil {
+		return nil, err
+	}
+	if err := binary.Read(handle, binary.LittleEndian, &descr.NextEventOffset); err != nil {
 		return nil, err
 	}
 
-	return parseTPM2Log(file)
+	return &descr, nil
 }

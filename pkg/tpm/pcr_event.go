@@ -112,13 +112,7 @@ func parseEfiSpecEvent (handle io.Reader) (*TcgEfiSpecIDEvent, error) {
 	return &efiSpecEvent, nil
 }
 
-// type TcgPcrEvent struct {
-// 	pcrIndex  uint32
-// 	eventType uint32
-// 	digest    [20]byte
-// 	eventSize uint32
-// 	event     []byte
-// }
+// type TcgPcrEvent parsing
 
 func parseTcgPcrEvent(handle io.Reader) (*TcgPcrEvent, error) {
 	var endianess binary.ByteOrder = binary.LittleEndian
@@ -194,13 +188,7 @@ func (e *TcgPcrEvent) String() string {
 }
 
 
-// type TcgPcrEvent2 struct {
-// 	pcrIndex  uint32
-// 	eventType uint32
-// 	digests   LDigestValues
-// 	eventSize uint32
-// 	event     []byte
-// }
+// type TcgPcrEvent2 parsing
 func parseTcgPcrEvent2(handle io.Reader) (*TcgPcrEvent2, error) {
 	var endianess binary.ByteOrder = binary.LittleEndian
 	var pcrEvent TcgPcrEvent2
@@ -250,6 +238,9 @@ func (e *TcgPcrEvent2) PcrEventName() string {
 	if EFILogTypes[EFILogID(e.eventType)] != "" {
 		return EFILogTypes[EFILogID(e.eventType)]
 	}
+	if TxtLogTypes[TxtLogID(e.eventType)] != "" {
+		return TxtLogTypes[TxtLogID(e.eventType)]
+	}
 
 	return ""
 }
@@ -298,7 +289,7 @@ func (e *TcgPcrEvent2) String() string {
 			b.WriteString("SM3 Digest: ")
 		}
 
-		fmt.Fprintf(&b, "%x", d.digest.hash)
+		fmt.Fprintf(&b, "%x\n", d.digest.hash)
 	}
 
 	return b.String()
